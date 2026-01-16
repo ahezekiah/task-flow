@@ -5,7 +5,7 @@ function Header(){
             <h1>Temp Header</h1>
             <nav>
                 <ul>
-                    <li></li>
+                    <li><a href="taskcards"></a>Task Cards</li> {/* temporary link */}
                 </ul>
             </nav>
         </header>
