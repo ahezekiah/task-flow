@@ -48,15 +48,10 @@ const initialTasks = [
 
 
 export default function App() {
-  const [tasks, setTasks] = useState(initialTasks);
-
-  // Load tasks from localStorage on mount
-  useEffect(() => {
+  const [tasks, setTasks] = useState(() => {
     const saved = localStorage.getItem("tasks");
-    if (saved) {
-      setTasks(JSON.parse(saved));
-    }
-  }, []);
+    return saved ? JSON.parse(saved) : initialTasks;
+  });
 
   // Save tasks to localStorage whenever they change
   useEffect(() => {

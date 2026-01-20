@@ -2,7 +2,7 @@ import { useState } from "react";
 
 const PRIORITIES = ["Low", "Medium", "High"];
 
-export default function AddTaskForm(){
+export default function AddTaskForm({ onAddTask }){
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [priority, setPriority] = useState(PRIORITIES[0]);
@@ -18,7 +18,7 @@ export default function AddTaskForm(){
             title: title.trim(),
             description: description.trim(),
             priority,
-            dueDate: dueDate ? new Date(dueDate) : null,
+            dueDate,
         });
 
         //reset form
