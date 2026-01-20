@@ -112,6 +112,7 @@ function handleToggleTask(taskIdToToggle) {
           </section>
         </div>
       </main>
+      
     </div>
   );
 }
