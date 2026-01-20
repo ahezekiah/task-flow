@@ -47,7 +47,7 @@ const initialTasks = [
 ];
 
 
-function App() {
+export default function App() {
   const [tasks, setTasks] = useState(initialTasks);
 
   // makes unique-ish IDs even if you delete stuff (no collisions)
@@ -111,11 +111,7 @@ function handleToggleTask(taskIdToToggle) {
             </div>
           </section>
         </div>
-        
-
       </main>
     </div>
-  )
+  );
 }
-
-export default App
