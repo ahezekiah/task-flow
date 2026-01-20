@@ -31,7 +31,7 @@ export default function AddTaskForm(){
         <form onSubmit={handleSubmit} className="space-y-4">
             <label className="block">
                 <span className="text-sm text-slate-300">Title</span>
-                <input vsalue={title}
+                <input value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="e.g., Finish TaskFlow UI"
                     className="mt-1 w-full rounded-xl border border-slate-800 bg-slate-950/40 px-3 py-2 text-slate-100 placeholder:text-slate-500 outline-none focus:border-slate-500"
@@ -73,7 +73,7 @@ export default function AddTaskForm(){
             </div>
             
             <button type="submit"
-                className="w-full rounded-xl bg-slate-100 px-4 py-2 font-semibold text-slate-950 hover:bg-white active;scale-[0.99]">
+                className="w-full rounded-xl bg-slate-100 px-4 py-2 font-semibold text-slate-950 hover:bg-white active:scale-[0.99]">
                     Add Task
                 </button>
         </form>

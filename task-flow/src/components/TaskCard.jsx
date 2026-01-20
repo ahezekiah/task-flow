@@ -2,7 +2,7 @@ function priorityBadge(priority){
     const base = "inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold";
 
     if(priority === 'High') return `${base} border-rose-500/40 bg-rose-500/10 text-rose-200`;
-    if(priority === 'Low') return `${base} border-emerald-500/40 bg-emerald-500/10 text-emearald-200`;
+    if(priority === 'Low') return `${base} border-emerald-500/40 bg-emerald-500/10 text-emerald-200`;
     return `${base} border-amber-500/40 bg-amber-500/10 text-amber-200`;
 }
 

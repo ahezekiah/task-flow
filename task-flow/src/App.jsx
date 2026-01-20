@@ -96,7 +96,7 @@ function handleToggleTask(taskIdToToggle) {
           </section>
           <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 shadow-sm">
             <div className="flex items-start justify-between gap-3">
-              <h2 classNmae="text-lg font-semibold">Task List</h2>
+              <h2 className="text-lg font-semibold">Task List</h2>
               <p className="mt-1 text-sm text-slate-400">
                 Manage your tasks: Toggle completion or delete as needed.
               </p>
