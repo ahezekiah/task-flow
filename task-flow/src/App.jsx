@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Header from "./components/Header";
 import AddTaskForm from "./components/AddTaskForm";
 import TaskList from "./components/TaskList";
@@ -49,6 +49,19 @@ const initialTasks = [
 
 export default function App() {
   const [tasks, setTasks] = useState(initialTasks);
+
+  // Load tasks from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem("tasks");
+    if (saved) {
+      setTasks(JSON.parse(saved));
+    }
+  }, []);
+
+  // Save tasks to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }, [tasks]);
 
   // makes unique-ish IDs even if you delete stuff (no collisions)
   const nextId = useMemo(() => {
