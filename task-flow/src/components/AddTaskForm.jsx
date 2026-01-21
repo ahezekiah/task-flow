@@ -13,7 +13,6 @@ export default function AddTaskForm({ onAddTask }){
 
         if (!title.trim()) return;
 
-        // eslint-disable-next-line no-undef
         onAddTask({
             title: title.trim(),
             description: description.trim(),
