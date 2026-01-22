@@ -1,3 +1,8 @@
+//note to self:
+//how to: prevent refresh on form submit?
+//disable linting for this file?
+
+
 import { useState } from "react";
 
 const PRIORITIES = ["Low", "Medium", "High"];
@@ -9,11 +14,10 @@ export default function AddTaskForm({ onAddTask }){
     const [dueDate, setDueDate] = useState("");
 
     function handleSubmit(e) {
-        e.preventDefault(); // prevents refresh
+        e.preventDefault(); // preventing refresh
 
         if (!title.trim()) return;
 
-        // eslint-disable-next-line no-undef
         onAddTask({
             title: title.trim(),
             description: description.trim(),
@@ -21,7 +25,6 @@ export default function AddTaskForm({ onAddTask }){
             dueDate,
         });
 
-        //reset form
         setTitle("");
         setDescription("");
         setPriority(PRIORITIES[0]);
