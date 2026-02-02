@@ -194,38 +194,26 @@ export default function App() {
   // Continue to render the actual app below
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
-      <Header/>
-      <main className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
-        <div className="grid gap-6 lg:grid-cols-[420px_1fr]">
-          <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 shadow-sm">
-            <h2 className="text-lg font-semibold">Add New Task</h2>
-            <p className="mt-1 text-sm text-slate-400">
-              Keep it simeple: Title, Description, Priority, & Due Date.
-            </p>
-            <div className="mt-4">
-              <AddTaskForm onAddTask={handleAddTask} />
-            </div>
-          </section>
-          <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 shadow-sm">
-            <div className="flex items-start justify-between gap-3">
-              <h2 className="text-lg font-semibold">Task List</h2>
-              <p className="mt-1 text-sm text-slate-400">
-                Manage your tasks: Toggle completion or delete as needed.
-              </p>
-            </div>
-            
-            <div className="mt-4">
-              <TaskList 
-                tasks={tasks} 
-                onDeleteTask={handleDeleteTask} 
-                onToggleTask={handleToggleTask} 
-              />
-            </div>
-          </section>
-        </div>
-      </main>
-      
-    </div>
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route index 
+        element={<Dashboard 
+            tasks={tasks} 
+            onAddTask={handleAddTask} 
+            onDeleteTask={handleDeleteTask} 
+            onToggleTask={handleToggleTask} />} />
+
+
+        <Route path="tasks/:taskId" 
+            element={<TaskDetailPage tasks={tasks} />} />
+
+        <Route path="about" element={<About />} />
+
+        <Route path="*" element={<NotFound />} />
+      </Route>
+
+
+
+    </Routes>
   );
 }

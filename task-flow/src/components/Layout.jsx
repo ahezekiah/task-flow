@@ -4,9 +4,9 @@ import Header from "./Header";
 export default function Layout(){
     return(
         <>
-        <div>
+        <div className="min-h-screen bg-slate-950 text-slate-100">
             <Header />
-            <main className="p-6">
+            <main className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
                 <Outlet />
             </main>
         </div>
