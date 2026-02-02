@@ -1,3 +1,6 @@
+import { Link } from "react-router-dom";
+
+
 function priorityBadge(priority){
     const base = "inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold";
 
@@ -14,11 +17,13 @@ export default function TaskCard({ task, onDelete, onToggle}){
         ].join(" ")}>
             <div className="flex items-start justify-between gap-3">
                 <div>
-                    <h3 className={[ "text-base font-semibold",
+                    <Link to={`/tasks/${task.id}`} className="text-lg font-bold text-blue-600 underline">
+                        <h3 className={[ "text-base font-semibold",
                         task.completed ? "line-through text-slate-400" : "text-slate-100",
-                    ].join(" ")}>
-                        {task.title}
-                    </h3>
+                        ].join(" ")}>
+                            {task.title}
+                        </h3>
+                    </Link>
                     <p className={[ "mt-1 text-sm", 
                         task.completed ? "line-through text-slate-500" : "text-slate-400",
                     ].join(" ")}>

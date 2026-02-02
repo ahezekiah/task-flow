@@ -13,9 +13,15 @@
 // 3. Implement a loading state that is active during the initial data load. 
 
 import { useEffect, useMemo, useState } from "react";
+import { Routes, Route } from "react-router-dom";
+import Layout from "./components/Layout";
 import Header from "./components/Header";
 import AddTaskForm from "./components/AddTaskForm";
 import TaskList from "./components/TaskList";
+import Dashboard from "./pages/Dashboard";
+import TaskDetailPage from "./pages/TaskDetailPage";
+import NotFound from "./pages/NotFound";
+import About from "./pages/About";
 
 const initialTasks = [
   {
@@ -164,6 +170,7 @@ export default function App() {
       )
     );
   }
+
   // LOADING UI (Conditional Rendering)
   // Early return pattern: if loading, show spinner and exit
   // This prevents the rest of the component from rendering while loading

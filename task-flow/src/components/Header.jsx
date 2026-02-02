@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export default function Header(){
     return(
         <header className="sticky top-0 z-10 border-b border-slate-800 bg-slate-950/80 backdrop-blur">
@@ -12,6 +14,9 @@ export default function Header(){
                     </div>
                 </div>
                 <nav className="hidden sm:flex items-center gap-2 text-sm text-slate-300">
+                    <Link to="/about" className="rounded-full border border-slate-800 px-3 py-1 hover:bg-slate-800/30">
+                        About
+                    </Link>
                     <span className="rounded-full border border-slate-800 px-3 py-1">
                         Components
                     </span>
