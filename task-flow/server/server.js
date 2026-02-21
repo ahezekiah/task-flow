@@ -9,14 +9,6 @@ const usersRouter = require("./routes/users");
 app.use(cors());
 app.use(express.json());
 
-//some hardcoded data for our "database"
-// let tasks = [
-//     //Update tasks to whatever ^^
-//     {id: 1, title: "Sketch and art piece", description: "Make a sketch and start basic shading", priority: "low", dueDate: "2026-02-08", completed: false},
-//     {id: 1, title: "Clean desk", description: "Organize desk, throw away trash, wipe surface", priority: "Medium", dueDate: "2026-02-06", completed: true},
-//     {id: 1, title: "Update Discord pfp", description: "Change banner and make it a new style", priority: "Low", dueDate: "2026-02-09", completed: false}
-// ];
-
 app.use("/tasks", tasksRouter);
 app.use("/users", usersRouter);
 

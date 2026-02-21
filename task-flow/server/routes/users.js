@@ -3,11 +3,11 @@ const router = express.Router();
 
 let users = [];
 
-router.get("/api/users", (req, res) => {
+router.get("/", (req, res) => {
     res.json(users);
 });
 
-router.post("/api/user", (req, res) => {
+router.post("/", (req, res) => {
 
 });
 
