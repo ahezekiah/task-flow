@@ -1,84 +1,110 @@
-//note to self:
-//how to: prevent refresh on form submit?
-//disable linting for this file?
-
-
 import { useState } from "react";
+import { motion } from "framer-motion";
+import { GlassInput, GlassTextarea, GlassSelect } from "./ui/GlassInput";
+import { GlassButton } from "./ui/GlassButton";
 
-const PRIORITIES = ["Low", "Medium", "High"];
+const defaultForm = {
+  title: "",
+  description: "",
+  priority: "MEDIUM",
+  status: "TODO",
+  dueDate: "",
+};
 
-export default function AddTaskForm({ onAddTask }){
-    const [title, setTitle] = useState("");
-    const [description, setDescription] = useState("");
-    const [priority, setPriority] = useState(PRIORITIES[0]);
-    const [dueDate, setDueDate] = useState("");
+export default function AddTaskForm({ onAddTask, onCancel }) {
+  const [form, setForm] = useState(defaultForm);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-    function handleSubmit(e) {
-        e.preventDefault(); // preventing refresh
+  function handleChange(e) {
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    if (error) setError("");
+  }
 
-        if (!title.trim()) return;
-
-        onAddTask({
-            title: title.trim(),
-            description: description.trim(),
-            priority,
-            dueDate,
-        });
-
-        setTitle("");
-        setDescription("");
-        setPriority(PRIORITIES[0]);
-        setDueDate("");
+  async function handleSubmit(e) {
+    e.preventDefault();
+    if (!form.title.trim()) {
+      setError("Title is required");
+      return;
     }
-    return(
-        <form onSubmit={handleSubmit} className="space-y-4">
-            <label className="block">
-                <span className="text-sm text-slate-300">Title</span>
-                <input value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="e.g., Finish TaskFlow UI"
-                    className="mt-1 w-full rounded-xl border border-slate-800 bg-slate-950/40 px-3 py-2 text-slate-100 placeholder:text-slate-500 outline-none focus:border-slate-500"
-                />
-            </label>
+    setLoading(true);
+    try {
+      await onAddTask({
+        ...form,
+        title: form.title.trim(),
+        description: form.description.trim() || undefined,
+        dueDate: form.dueDate || undefined,
+      });
+      setForm(defaultForm);
+    } finally {
+      setLoading(false);
+    }
+  }
 
-            <label className="block">
-                <span className="text-sm text-slate-300">Description</span>
-                <textarea value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="What needs to happen?"
-                    rows={3}
-                    className="mt-1 w-full resize-none rounded-xl border border-slate-800 bg-slate-950/40 px-3 py-2 text-slate-100 placeholder:text-slate-500 outline-none focus:border-slate-500"
-                />
-            </label>
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -12 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -12 }}
+      transition={{ type: "spring", stiffness: 300, damping: 28 }}
+      className="glass-card p-5 mb-6"
+    >
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+          New Task
+        </h2>
+        <button
+          onClick={onCancel}
+          style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)", fontSize: 18, lineHeight: 1 }}
+        >
+          ×
+        </button>
+      </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-                <label className="block">
-                    <span className="text-sm text-slate-300">Priority</span>
-                        <select value={priority}
-                            onChange={(e) => setPriority(e.target.value)}
-                            className="mt-1 w-full rounded-xl border border-slate-800 bg-slate-950/40 px-3 py-2 text-slate-100 outline-none focus:border-slate-500"
-                        >
-                            {PRIORITIES.map((level) => (
-                                <option key={level} value={level}>
-                                    {level}
-                                </option>
-                            ))}
-                        </select>
-                </label>
-
-                <label className="block">
-                    <span className="text-sm text-slate-300">Due Date</span>
-                        <input type="date" value={dueDate}
-                            onChange={(e) => setDueDate(e.target.value)}
-                            className="mt-1 w-full rounded-xl border border-slate-800 bg-slate-950/40 px-3 py-2 text-slate-100 outline-none focus:border-slate-500"
-                        />
-                </label>
-            </div>
-            
-            <button type="submit"
-                className="w-full rounded-xl bg-slate-100 px-4 py-2 font-semibold text-slate-950 hover:bg-white active:scale-[0.99]">
-                    Add Task
-                </button>
-        </form>
-    )
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+        <GlassInput
+          name="title"
+          placeholder="Task title"
+          value={form.title}
+          onChange={handleChange}
+          error={error}
+          autoFocus
+        />
+        <GlassTextarea
+          name="description"
+          placeholder="Description (optional)"
+          value={form.description}
+          onChange={handleChange}
+          rows={2}
+        />
+        <div className="grid grid-cols-3 gap-3">
+          <GlassSelect name="priority" value={form.priority} onChange={handleChange} label="Priority">
+            <option value="LOW">Low</option>
+            <option value="MEDIUM">Medium</option>
+            <option value="HIGH">High</option>
+          </GlassSelect>
+          <GlassSelect name="status" value={form.status} onChange={handleChange} label="Status">
+            <option value="TODO">To Do</option>
+            <option value="IN_PROGRESS">In Progress</option>
+            <option value="DONE">Done</option>
+          </GlassSelect>
+          <GlassInput
+            name="dueDate"
+            type="date"
+            value={form.dueDate}
+            onChange={handleChange}
+            label="Due date"
+          />
+        </div>
+        <div className="flex gap-2 mt-1">
+          <GlassButton type="submit" variant="primary" loading={loading} className="flex-1">
+            Add task
+          </GlassButton>
+          <GlassButton type="button" variant="ghost" onClick={onCancel}>
+            Cancel
+          </GlassButton>
+        </div>
+      </form>
+    </motion.div>
+  );
 }

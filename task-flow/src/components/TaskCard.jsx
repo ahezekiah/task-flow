@@ -1,65 +1,101 @@
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { GlassBadge } from "./ui/GlassBadge";
+import { GlassButton } from "./ui/GlassButton";
 
-
-function priorityBadge(priority){
-    const base = "inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold";
-
-    if(priority === 'High') return `${base} border-rose-500/40 bg-rose-500/10 text-rose-200`;
-    if(priority === 'Low') return `${base} border-emerald-500/40 bg-emerald-500/10 text-emerald-200`;
-    return `${base} border-amber-500/40 bg-amber-500/10 text-amber-200`;
+function isOverdue(task) {
+  if (!task.dueDate || task.completed || task.status === "DONE") return false;
+  return new Date(task.dueDate) < new Date();
 }
 
-
-export default function TaskCard({ task, onDelete, onToggle}){
-    return(
-        <article className={["rounded-2xl border p-4 shadow-sm transition",
-            task.completed ? "border-slate-800 bg-slate-950/30 opacity-80" : "border-slate-800 bg-slate-950/40 hover:border-slate-600",
-        ].join(" ")}>
-            <div className="flex items-start justify-between gap-3">
-                <div>
-                    <Link to={`/tasks/${task.id}`} className="text-lg font-bold text-blue-600 underline">
-                        <h3 className={[ "text-base font-semibold",
-                        task.completed ? "line-through text-slate-400" : "text-slate-100",
-                        ].join(" ")}>
-                            {task.title}
-                        </h3>
-                    </Link>
-                    <p className={[ "mt-1 text-sm", 
-                        task.completed ? "line-through text-slate-500" : "text-slate-400",
-                    ].join(" ")}>
-                        {task.description}
-                    </p>
-                </div>
-                <span className={priorityBadge(task.priority)}>
-                    {task.priority}
-                </span>
-            </div>
-            <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-                <div className="text-xs text-slate-400">
-                    <span className="font-semibold text-slate-300">Due:</span>{" "}
-                    {task.dueDate}
-                </div>
-
-                <div className="flex items-center gap-2">
-                    <label className="flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-950/30 px-3 py-2 text-sm text-slate-200">
-                    <input 
-                        type="checkbox"
-                        checked={task.completed}
-                        onChange={onToggle} //pass refernce, not call result
-                        className="h-4 w-4 accent-slate-100"
-                    />
-                        Done
-                    </label>
-
-                    <button 
-                        onClick={onDelete}
-                        className="rounded-xl border border-slate-800 bg-slate-950/30 px-3 py-2 text-sm text-slate-200 hover:border-slate-600 hover:text-white"
-                    >
-                        Delete
-                    </button>
-                </div>
-            </div>
-        </article>
-    );
+function formatDate(dateStr) {
+  if (!dateStr) return null;
+  return new Date(dateStr).toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
+export default function TaskCard({ task, onDelete, onToggle, index = 0 }) {
+  const overdue = isOverdue(task);
+  const done = task.completed || task.status === "DONE";
+
+  return (
+    <motion.article
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.96 }}
+      transition={{ type: "spring", stiffness: 300, damping: 30, delay: index * 0.04 }}
+      whileHover={{ y: -2 }}
+      className="glass-card p-4 flex flex-col gap-3"
+      style={{
+        opacity: done ? 0.6 : 1,
+        borderColor: overdue ? "rgba(239, 68, 68, 0.25)" : undefined,
+      }}
+    >
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex flex-col gap-1 min-w-0">
+          <Link
+            to={`/tasks/${task.id}`}
+            className="text-sm font-semibold leading-snug hover:opacity-70 transition-opacity truncate"
+            style={{
+              color: "var(--text-primary)",
+              textDecoration: "none",
+              textDecorationLine: done ? "line-through" : "none",
+            }}
+          >
+            {task.title}
+          </Link>
+          {task.description && (
+            <p
+              className="text-xs line-clamp-2"
+              style={{ color: "var(--text-muted)" }}
+            >
+              {task.description}
+            </p>
+          )}
+        </div>
+        <GlassBadge type={task.priority} className="shrink-0" />
+      </div>
+
+      <div className="flex items-center gap-2 flex-wrap">
+        <GlassBadge type={task.status} />
+        {task.dueDate && (
+          <span
+            className="text-xs"
+            style={{ color: overdue ? "rgba(252, 165, 165, 0.8)" : "var(--text-muted)" }}
+          >
+            {overdue ? "Overdue · " : "Due · "}
+            {formatDate(task.dueDate)}
+          </span>
+        )}
+        {task.assignee && (
+          <span className="text-xs ml-auto" style={{ color: "var(--text-muted)" }}>
+            → {task.assignee.name}
+          </span>
+        )}
+      </div>
+
+      <div className="divider" />
+
+      <div className="flex items-center justify-between gap-2">
+        <motion.label
+          className="flex items-center gap-2 cursor-pointer select-none"
+          whileTap={{ scale: 0.95 }}
+        >
+          <input
+            type="checkbox"
+            checked={done}
+            onChange={onToggle}
+            className="h-4 w-4 rounded"
+            style={{ accentColor: "rgba(255,255,255,0.8)", cursor: "pointer" }}
+          />
+          <span className="text-xs" style={{ color: "var(--text-secondary)" }}>
+            {done ? "Completed" : "Mark done"}
+          </span>
+        </motion.label>
+
+        <GlassButton variant="danger" className="text-xs px-2.5 py-1.5" onClick={onDelete}>
+          Delete
+        </GlassButton>
+      </div>
+    </motion.article>
+  );
+}

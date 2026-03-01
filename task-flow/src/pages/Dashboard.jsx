@@ -1,36 +1,171 @@
+import { useState, useEffect, useMemo } from "react";
+import { AnimatePresence } from "framer-motion";
+import { useAuth } from "../context/AuthContext";
+import { useToast } from "../components/ui/Toast";
+import { api } from "../lib/api";
+import { GlassButton } from "../components/ui/GlassButton";
 import AddTaskForm from "../components/AddTaskForm";
 import TaskList from "../components/TaskList";
 
-export default function Dashboard({ tasks, onAddTask, onDeleteTask, onToggleTask }) {
-    return(
-        <>
-        <div className="grid gap-6 lg:grid-cols-[420px_1fr]">
-            <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 shadow-sm">
-                <h2 className="text-lg font-semibold">Add New Task</h2>
-                <p className="mt-1 text-sm text-slate-400">
-                Keep it simeple: Title, Description, Priority, & Due Date.
-                </p>
-                <div className="mt-4">
-                <AddTaskForm onAddTask={onAddTask} />
-                </div>
-            </section>
-            <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 shadow-sm">
-                <div className="flex items-start justify-between gap-3">
-                <h2 className="text-lg font-semibold">Task List</h2>
-                <p className="mt-1 text-sm text-slate-400">
-                    Manage your tasks: Toggle completion or delete as needed.
-                </p>
-                </div>
-                
-                <div className="mt-4">
-                <TaskList 
-                    tasks={tasks} 
-                    onDeleteTask={onDeleteTask} 
-                    onToggleTask={onToggleTask} 
-                />
-                </div>
-            </section>
+const STATUS_FILTERS = [
+  { label: "All", value: "ALL" },
+  { label: "To Do", value: "TODO" },
+  { label: "In Progress", value: "IN_PROGRESS" },
+  { label: "Done", value: "DONE" },
+];
+
+const PRIORITY_FILTERS = [
+  { label: "Any priority", value: "ALL" },
+  { label: "High", value: "HIGH" },
+  { label: "Medium", value: "MEDIUM" },
+  { label: "Low", value: "LOW" },
+];
+
+function greeting(name) {
+  const hour = new Date().getHours();
+  const first = name?.split(" ")[0] ?? "";
+  if (hour < 12) return `Good morning, ${first}`;
+  if (hour < 17) return `Good afternoon, ${first}`;
+  return `Good evening, ${first}`;
+}
+
+export default function Dashboard() {
+  const { user } = useAuth();
+  const toast = useToast();
+
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [statusFilter, setStatusFilter] = useState("ALL");
+  const [priorityFilter, setPriorityFilter] = useState("ALL");
+
+  useEffect(() => {
+    api
+      .get("/tasks")
+      .then(setTasks)
+      .catch(() => toast("Failed to load tasks", "error"))
+      .finally(() => setLoading(false));
+  }, []);
+
+  async function handleAddTask(data) {
+    try {
+      const task = await api.post("/tasks", data);
+      setTasks((prev) => [task, ...prev]);
+      setShowForm(false);
+      toast("Task created", "success");
+    } catch (err) {
+      toast(err.message || "Failed to create task", "error");
+      throw err;
+    }
+  }
+
+  async function handleToggle(id) {
+    const task = tasks.find((t) => t.id === id);
+    const isDone = task.completed || task.status === "DONE";
+    try {
+      const updated = await api.put(`/tasks/${id}`, {
+        completed: !isDone,
+        status: !isDone ? "DONE" : "TODO",
+      });
+      setTasks((prev) => prev.map((t) => (t.id === id ? updated : t)));
+    } catch {
+      toast("Failed to update task", "error");
+    }
+  }
+
+  async function handleDelete(id) {
+    try {
+      await api.delete(`/tasks/${id}`);
+      setTasks((prev) => prev.filter((t) => t.id !== id));
+      toast("Task deleted", "default");
+    } catch {
+      toast("Failed to delete task", "error");
+    }
+  }
+
+  const filtered = useMemo(() => {
+    return tasks.filter((t) => {
+      const statusOk = statusFilter === "ALL" || t.status === statusFilter;
+      const priorityOk = priorityFilter === "ALL" || t.priority === priorityFilter;
+      return statusOk && priorityOk;
+    });
+  }, [tasks, statusFilter, priorityFilter]);
+
+  const completedCount = tasks.filter((t) => t.completed || t.status === "DONE").length;
+
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="text-xl font-semibold tracking-tight" style={{ color: "var(--text-primary)" }}>
+            {greeting(user?.name)}
+          </h1>
+          <p className="text-sm mt-0.5" style={{ color: "var(--text-muted)" }}>
+            {tasks.length === 0
+              ? "No tasks yet"
+              : `${tasks.length} task${tasks.length !== 1 ? "s" : ""} · ${completedCount} completed`}
+          </p>
         </div>
-        </>
-    )
+        <GlassButton
+          variant="primary"
+          onClick={() => setShowForm((v) => !v)}
+        >
+          {showForm ? "Cancel" : "+ New task"}
+        </GlassButton>
+      </div>
+
+      <AnimatePresence>
+        {showForm && (
+          <AddTaskForm
+            onAddTask={handleAddTask}
+            onCancel={() => setShowForm(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div
+          className="flex items-center gap-1 p-1 rounded-xl"
+          style={{ background: "var(--glass)", border: "1px solid var(--glass-border)" }}
+        >
+          {STATUS_FILTERS.map((f) => (
+            <button
+              key={f.value}
+              onClick={() => setStatusFilter(f.value)}
+              className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
+              style={{
+                background: statusFilter === f.value ? "rgba(255,255,255,0.1)" : "transparent",
+                border: statusFilter === f.value ? "1px solid rgba(255,255,255,0.15)" : "1px solid transparent",
+                color: statusFilter === f.value ? "var(--text-primary)" : "var(--text-muted)",
+                cursor: "pointer",
+              }}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+
+        <select
+          value={priorityFilter}
+          onChange={(e) => setPriorityFilter(e.target.value)}
+          className="glass-input glass-select text-xs px-3 py-1.5"
+          style={{ width: "auto", backgroundColor: "rgba(255,255,255,0.04)" }}
+        >
+          {PRIORITY_FILTERS.map((f) => (
+            <option key={f.value} value={f.value}>
+              {f.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <TaskList
+        tasks={filtered}
+        loading={loading}
+        onDeleteTask={handleDelete}
+        onToggleTask={handleToggle}
+        onNewTask={() => setShowForm(true)}
+      />
+    </div>
+  );
 }
