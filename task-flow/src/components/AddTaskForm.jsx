@@ -9,9 +9,10 @@ const defaultForm = {
   priority: "MEDIUM",
   status: "TODO",
   dueDate: "",
+  assigneeId: "",
 };
 
-export default function AddTaskForm({ onAddTask, onCancel }) {
+export default function AddTaskForm({ onAddTask, onCancel, members = [] }) {
   const [form, setForm] = useState(defaultForm);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -34,6 +35,7 @@ export default function AddTaskForm({ onAddTask, onCancel }) {
         title: form.title.trim(),
         description: form.description.trim() || undefined,
         dueDate: form.dueDate || undefined,
+        assigneeId: form.assigneeId ? parseInt(form.assigneeId) : undefined,
       });
       setForm(defaultForm);
     } finally {
@@ -96,6 +98,14 @@ export default function AddTaskForm({ onAddTask, onCancel }) {
             label="Due date"
           />
         </div>
+        {members.length > 0 && (
+          <GlassSelect name="assigneeId" value={form.assigneeId} onChange={handleChange} label="Assign to">
+            <option value="">Unassigned</option>
+            {members.map((m) => (
+              <option key={m.id} value={m.id}>{m.name}</option>
+            ))}
+          </GlassSelect>
+        )}
         <div className="flex gap-2 mt-1">
           <GlassButton type="submit" variant="primary" loading={loading} className="flex-1">
             Add task

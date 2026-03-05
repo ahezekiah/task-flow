@@ -8,7 +8,11 @@ router.use(verifyToken);
 router.get("/", async (req, res) => {
   const { teamId } = req.query;
 
-  const where = teamId
+  const isAdminAll = req.query.all === "true" && req.user.role === "SYSTEM_ADMIN";
+
+  const where = isAdminAll
+    ? {}
+    : teamId
     ? { teamId: parseInt(teamId) }
     : { creatorId: req.user.userId, teamId: null };
 

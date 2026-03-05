@@ -4,6 +4,12 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import Layout from "./components/Layout";
 import Dashboard from "./pages/Dashboard";
 import TaskDetailPage from "./pages/TaskDetailPage";
+import TeamsPage from "./pages/TeamsPage";
+import TeamDetailPage from "./pages/TeamDetailPage";
+import AdminPage from "./pages/AdminPage";
+import KanbanPage from "./pages/KanbanPage";
+import ActivityPage from "./pages/ActivityPage";
+import CalendarPage from "./pages/CalendarPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import About from "./pages/About";
@@ -26,6 +32,12 @@ export default function App() {
         >
           <Route index element={<Dashboard />} />
           <Route path="tasks/:taskId" element={<TaskDetailPage />} />
+          <Route path="teams" element={<TeamsPage />} />
+          <Route path="teams/:teamId" element={<TeamDetailPage />} />
+          <Route path="admin" element={<AdminPage />} />
+          <Route path="kanban" element={<KanbanPage />} />
+          <Route path="activity" element={<ActivityPage />} />
+          <Route path="calendar" element={<CalendarPage />} />
           <Route path="about" element={<About />} />
         </Route>
 

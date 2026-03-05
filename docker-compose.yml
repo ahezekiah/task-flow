@@ -1,0 +1,36 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: naeomei
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: taskflow_pro
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U naeomei -d taskflow_pro"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./task-flow/server
+    ports:
+      - "5000:5000"
+    environment:
+      DATABASE_URL: postgresql://naeomei:postgres@postgres:5432/taskflow_pro?schema=public
+      JWT_SECRET: taskflow-pro-super-secret-key-change-in-production
+      PORT: 5000
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    build: ./task-flow
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
