@@ -6,6 +6,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { api } from "../lib/api";
 import { useToast } from "../components/ui/Toast";
 import { GlassBadge } from "../components/ui/GlassBadge";
+import './styling/kanban.css';
 
 const COLUMNS = [
   { id: "TODO", label: "To Do" },
@@ -26,18 +27,15 @@ function KanbanCard({ task, isDragOverlay = false }) {
       }}
     >
       <p
-        className="text-sm font-medium leading-snug"
-        style={{
-          color: task.status === "DONE" ? "var(--text-muted)" : "var(--text-primary)",
-          textDecoration: task.status === "DONE" ? "line-through" : "none",
-        }}
+        className={`text-sm font-medium leading-snug kanban-card-title ${
+          task.status === "DONE" ? "done" : ""
+        }`}
       >
         {task.title}
       </p>
       {task.description && (
         <p
-          className="text-xs line-clamp-2"
-          style={{ color: "var(--text-muted)" }}
+          className="text-xs line-clamp-2 kanban-card-desc"
         >
           {task.description}
         </p>
@@ -46,15 +44,14 @@ function KanbanCard({ task, isDragOverlay = false }) {
         <GlassBadge type={task.priority?.toLowerCase()} />
         {task.dueDate && (
           <span
-            className="text-xs"
-            style={{ color: isOverdue ? "rgba(252,165,165,0.8)" : "var(--text-muted)" }}
+            className={`text-xs kanban-due ${isOverdue ? "overdue" : ""}`}
           >
             {new Date(task.dueDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
           </span>
         )}
       </div>
       {task.assignee && (
-        <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+        <p className="text-xs kanban-assignee">
           → {task.assignee.name}
         </p>
       )}
@@ -86,12 +83,11 @@ function KanbanColumn({ id, label, tasks }) {
   return (
     <div className="flex flex-col gap-3 min-w-0 flex-1">
       <div className="flex items-center justify-between px-1">
-        <h2 className="text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
+        <h2 className="text-xs font-semibold uppercase kanban-column-title">
           {label}
         </h2>
         <span
-          className="text-xs px-2 py-0.5 rounded-full"
-          style={{ background: "var(--glass)", color: "var(--text-muted)", border: "1px solid var(--glass-border)" }}
+          className="text-xs kanban-column-count"
         >
           {tasks.length}
         </span>
@@ -99,18 +95,14 @@ function KanbanColumn({ id, label, tasks }) {
 
       <div
         ref={setNodeRef}
-        className="flex flex-col gap-2 rounded-xl p-2 min-h-48 transition-colors"
-        style={{
-          background: isOver ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.02)",
-          border: `1px solid ${isOver ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.05)"}`,
-        }}
+        className={`kanban-column flex flex-col gap-2 ${isOver ? "drag-over" : ""}`}
       >
         {tasks.map((task) => (
           <DraggableCard key={task.id} task={task} />
         ))}
         {tasks.length === 0 && (
           <div className="flex-1 flex items-center justify-center py-8">
-            <p className="text-xs" style={{ color: "var(--text-muted)", opacity: 0.5 }}>
+            <p className="text-xs kanban-empty">
               Drop tasks here
             </p>
           </div>
@@ -183,10 +175,10 @@ export default function KanbanPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-xl font-semibold tracking-tight" style={{ color: "var(--text-primary)" }}>
+        <h1 className="text-xl font-semibold tracking-tight kanban-title">
           Kanban Board
         </h1>
-        <p className="text-sm mt-0.5" style={{ color: "var(--text-muted)" }}>
+        <p className="text-sm mt-0.5 kanban-subtitle">
           Drag tasks between columns to update their status
         </p>
       </div>

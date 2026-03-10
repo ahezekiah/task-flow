@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { api } from "../lib/api";
 import { useToast } from "../components/ui/Toast";
 import { GlassBadge } from "../components/ui/GlassBadge";
+import './styling/calendar.css'
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MONTHS = [
@@ -96,18 +97,16 @@ export default function CalendarPage() {
         <div className="flex items-center justify-between">
           <button
             onClick={prevMonth}
-            className="px-3 py-1.5 rounded-lg text-sm transition-colors"
-            style={{ background: "var(--glass)", border: "1px solid var(--glass-border)", color: "var(--text-secondary)", cursor: "pointer" }}
+            className="calendar-arrow px-3 py-1.5 rounded-lg text-sm"
           >
             ←
           </button>
-          <h2 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+          <h2 className="text-sm font-semibold calendar-header">
             {MONTHS[month]} {year}
           </h2>
           <button
             onClick={nextMonth}
-            className="px-3 py-1.5 rounded-lg text-sm transition-colors"
-            style={{ background: "var(--glass)", border: "1px solid var(--glass-border)", color: "var(--text-secondary)", cursor: "pointer" }}
+            className="calendar-arrow px-3 py-1.5 rounded-lg text-sm"
           >
             →
           </button>
@@ -116,7 +115,7 @@ export default function CalendarPage() {
         <div className="grid grid-cols-7 gap-px">
           {DAYS.map((d) => (
             <div key={d} className="text-center pb-2">
-              <span className="text-xs font-medium" style={{ color: "var(--text-muted)" }}>{d}</span>
+              <span className="text-xs font-medium calendar-day-label">{d}</span>
             </div>
           ))}
 
@@ -132,25 +131,14 @@ export default function CalendarPage() {
                 whileHover={{ scale: 1.04 }}
                 whileTap={{ scale: 0.97 }}
                 transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                className="rounded-lg p-1.5 flex flex-col items-center gap-1 min-h-12 transition-colors"
-                style={{
-                  background: isSelected
-                    ? "rgba(255,255,255,0.1)"
-                    : isToday
-                    ? "rgba(255,255,255,0.05)"
-                    : "transparent",
-                  border: isSelected
-                    ? "1px solid rgba(255,255,255,0.2)"
-                    : isToday
-                    ? "1px solid rgba(255,255,255,0.12)"
-                    : "1px solid transparent",
-                  cursor: "pointer",
-                  opacity: cell.outside ? 0.25 : 1,
-                }}
+                className={`calendar-cell flex flex-col items-center gap-1
+                  ${isToday ? "today" : ""}
+                  ${isSelected ? "selected" : ""}
+                  ${cell.outside ? "outside" : ""}
+                `}
               >
                 <span
-                  className="text-xs font-medium"
-                  style={{ color: isToday ? "var(--text-primary)" : "var(--text-secondary)" }}
+                  className={`text-xs font-medium calendar-date ${isToday ? "today" : ""}`}
                 >
                   {cell.date.getDate()}
                 </span>
@@ -162,10 +150,10 @@ export default function CalendarPage() {
                         className="h-1.5 w-1.5 rounded-full"
                         style={{
                           background: t.priority === "HIGH"
-                            ? "rgba(255,255,255,0.7)"
+                            ? "#ffb6c1"
                             : t.priority === "MEDIUM"
-                            ? "rgba(255,255,255,0.4)"
-                            : "rgba(255,255,255,0.2)",
+                            ? "#ffd580"
+                            : "#b0e6c9ff",
                         }}
                       />
                     ))}

@@ -1,0 +1,65 @@
+.kanban-title {
+    color: var(--text-primary);
+}
+
+.kanban-subtitle {
+    color: var(--text-muted);
+}
+
+.kanban-column-title {
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+}
+
+.kanban-column-count {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    color: var(--text-muted);
+    border-radius: 9999px;
+    padding: 2px 8px;
+}
+
+.kanban-column {
+    background: rgba(255, 255, 255, 0.25);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-xl);
+    padding: 8px;
+    min-height: 200px;
+
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.kanban-column.drag-over {
+    background: rgba(199, 210, 254, 0.35);
+    border-color: rgba(199, 210, 254, 0.6);
+}
+
+.kanban-card-title {
+    color: var(--text-primary);
+}
+
+.kanban-card-title.done {
+    color: var(--text-muted);
+    text-decoration: line-through;
+}
+
+.kanban-card-desc {
+    color: var(--text-muted);
+}
+
+.kanban-assignee {
+    color: var(--text-muted);
+}
+
+.kanban-due {
+    color: var(--text-muted);
+}
+
+.kanban-due.overdue {
+    color: #ff8fa3;
+}
+
+.kanban-empty {
+    color: var(--text-muted);
+    opacity: 0.5;
+}

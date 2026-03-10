@@ -1,0 +1,50 @@
+.calendar-header {
+    color: #ffb6c1;
+}
+
+.calendar-day-label {
+    color: var(--text-muted);
+}
+
+.calendar-cell {
+    border-radius: var(--radius-md);
+    min-height: 48px;
+    padding: 6px;
+    border: 1px solid transparent;
+    
+    transition: all 0.2s ease;
+}
+
+.calendar-cell:hover {
+    background: rgba(199, 210, 254, 0.25);
+}
+
+.calendar-cell.today {
+    background: rgba(199, 210, 254, 0.18);
+    border-color: rgba(199, 210, 254, 0.35);
+}
+
+.calendar-cell.selected {
+    background: rgba(255, 182, 193, 0.25);
+    border-color: rgba(255, 210, 254, 0.35);
+}
+
+.calendar-cell.outside {
+    opacity: 0.25;
+}
+
+.calendar-arrow {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    color: #ffb6c1;
+    cursor: pointer;
+}
+
+.calendar-arrow:hover {
+    background: var(--glass-hover);
+}
+
+.calendar-date {
+    color: #ffb6c1;
+}
+

@@ -3,12 +3,14 @@ import { motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
 import { GlassBadge } from "./ui/GlassBadge";
 import { useToast } from "./ui/Toast";
+import { useState } from "react";
 
 export default function Header() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const toast = useToast();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   function handleLogout() {
     logout();
@@ -57,7 +59,7 @@ export default function Header() {
           </Link>
 
           {user && (
-            <nav className="hidden md:flex items-center gap-4">
+            <div className="hidden md:flex items-center gap-4">
               <Link to="/" style={navStyle("/")}>My Tasks</Link>
               <Link to="/teams" style={navStyle("/teams")}>Teams</Link>
               <Link to="/kanban" style={navStyle("/kanban")}>Kanban</Link>
@@ -66,13 +68,14 @@ export default function Header() {
               {user.role === "SYSTEM_ADMIN" && (
                 <Link to="/admin" style={navStyle("/admin")}>Admin</Link>
               )}
-            </nav>
+            </div>
           )}
         </div>
 
         <div className="flex items-center gap-3">
           {user && (
             <>
+              <button className="sm:hidden text-xl" onClick={() => setMenuOpen(!menuOpen)}>☰</button>
               <GlassBadge type={user.role} />
               <span className="text-sm hidden sm:block" style={{ color: "var(--text-secondary)" }}>
                 {user.name}
@@ -91,6 +94,18 @@ export default function Header() {
           )}
         </div>
       </div>
+      {menuOpen && user && (
+            <div className="md:hidden flex flex-col gap-3 px-5 pb-4">
+              <Link to="/" style={navStyle("/")}>My Tasks</Link>
+              <Link to="/teams" style={navStyle("/teams")}>Teams</Link>
+              <Link to="/kanban" style={navStyle("/kanban")}>Kanban</Link>
+              <Link to="/activity" style={navStyle("/activity")}>Activity</Link>
+              <Link to="/calendar" style={navStyle("/calendar")}>Calendar</Link>
+              {user.role === "SYSTEM_ADMIN" && (
+                <Link to="/admin" style={navStyle("/admin")}>Admin</Link>
+              )}
+            </div>
+      )}
     </header>
   );
 }
