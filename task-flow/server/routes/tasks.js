@@ -1,7 +1,7 @@
 import { Router } from "express";
 const router = Router();
-import { task as _task, comment as _comment } from "../lib/prisma";
-import { verifyToken } from "../middleware/auth";
+import { task as _task, comment as _comment } from "../lib/prisma.js";
+import { verifyToken } from "../middleware/auth.js";
 
 router.use(verifyToken);
 

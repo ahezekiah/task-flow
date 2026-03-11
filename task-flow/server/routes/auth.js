@@ -2,7 +2,7 @@ import { Router } from "express";
 const router = Router();
 import { hash, compare } from "bcrypt";
 import { sign } from "jsonwebtoken";
-import { user as _user } from "../lib/prisma";
+import { user as _user } from "../lib/prisma.js";
 
 router.post("/register", async (req, res) => {
   const { email, password, name } = req.body;

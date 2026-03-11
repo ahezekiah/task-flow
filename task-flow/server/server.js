@@ -8,10 +8,10 @@ const PORT = process.env.PORT || 5050;
 app.use(cors());
 app.use(json());
 
-import authRouter from "./routes/auth";
-import tasksRouter from "./routes/tasks";
-import usersRouter from "./routes/users";
-import teamsRouter from "./routes/teams";
+import authRouter from "./routes/auth.js";
+import tasksRouter from "./routes/tasks.js";
+import usersRouter from "./routes/users.js";
+import teamsRouter from "./routes/teams.js";
 
 app.use("/auth", authRouter);
 app.use("/tasks", tasksRouter);
