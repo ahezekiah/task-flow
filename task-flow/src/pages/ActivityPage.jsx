@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { api } from "../lib/api";
-import { useAuth } from "../context/AuthContext";
 import { useToast } from "../components/ui/Toast";
 
 function timeAgo(dateStr) {
@@ -46,45 +45,8 @@ function activityLabel(event) {
   }
 }
 
-function buildEvents(tasks, currentUserId) {
-  const events = [];
-
-  tasks.forEach((task) => {
-    events.push({
-      id: `task-created-${task.id}`,
-      type: task.teamId ? "team_task" : "task_created",
-      task,
-      user: task.creator,
-      date: task.createdAt,
-    });
-
-    if (task.status === "DONE" && task.updatedAt !== task.createdAt) {
-      events.push({
-        id: `task-done-${task.id}`,
-        type: "task_done",
-        task,
-        user: task.creator,
-        date: task.updatedAt,
-      });
-    }
-
-    (task.comments || []).forEach((comment) => {
-      events.push({
-        id: `comment-${comment.id}`,
-        type: "comment",
-        task,
-        user: comment.user,
-        comment,
-        date: comment.createdAt,
-      });
-    });
-  });
-
-  return events.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 50);
-}
 
 export default function ActivityPage() {
-  const { user } = useAuth();
   const toast = useToast();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -92,20 +54,8 @@ export default function ActivityPage() {
   useEffect(() => {
     async function load() {
       try {
-        const personalTasks = await api.get("/tasks");
-        const teams = await api.get("/teams");
-
-        const teamTaskArrays = await Promise.all(
-          teams.map((t) => api.get(`/tasks?teamId=${t.id}`).catch(() => []))
-        );
-        const teamTasks = teamTaskArrays.flat();
-
-        const allTasks = [
-          ...personalTasks,
-          ...teamTasks.filter((t) => !personalTasks.find((p) => p.id === t.id)),
-        ];
-
-        setEvents(buildEvents(allTasks, user?.id));
+        const data = await api.get("/activity?limit=50");
+        setEvents(data);
       } catch {
         toast("Failed to load activity", "error");
       } finally {

@@ -12,11 +12,15 @@ const authRouter = require("./routes/auth");
 const tasksRouter = require("./routes/tasks");
 const usersRouter = require("./routes/users");
 const teamsRouter = require("./routes/teams");
+const activityRouter = require("./routes/activity");
+const adminRouter = require("./routes/admin");
 
 app.use("/auth", authRouter);
 app.use("/tasks", tasksRouter);
 app.use("/users", usersRouter);
 app.use("/teams", teamsRouter);
+app.use("/activity", activityRouter);
+app.use("/admin", adminRouter);
 
 app.get("/", (req, res) => {
   res.json({ message: "TaskFlow Pro API", status: "running" });
