@@ -84,6 +84,7 @@ model Task {
   priority    Priority   @default(MEDIUM)
   dueDate     DateTime?
   completed   Boolean    @default(false)
+  attachment  String? 
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 

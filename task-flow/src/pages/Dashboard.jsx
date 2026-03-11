@@ -47,17 +47,53 @@ export default function Dashboard() {
       .finally(() => setLoading(false));
   }, []);
 
+  // async function handleAddTask(data) {
+  //   try {
+  //     const task = await api.post("/tasks", data);
+  //     setTasks((prev) => [task, ...prev]);
+  //     setShowForm(false);
+  //     toast("Task created", "success");
+  //   } catch (err) {
+  //     toast(err.message || "Failed to create task", "error");
+  //     throw err;
+  //   }
+  // }
+
   async function handleAddTask(data) {
     try {
-      const task = await api.post("/tasks", data);
-      setTasks((prev) => [task, ...prev]);
+      let file = null;
+
+      if (data instanceof FormData) {
+        file = data.get("file");
+        data.delete("file");
+      }
+
+      // create task
+      const task = await api.post("/tasks", Object.fromEntries(data));
+
+      // upload file if present
+      if (file) {
+        const uploadData = new FormData();
+        uploadData.append("file", file);
+
+        await api.post(`/tasks/${task.id}/attachment`, uploadData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+      }
+
+      // get updated task with attachment
+      const updated = await api.get(`/tasks/${task.id}`);
+
+      setTasks((prev) => [updated, ...prev]);
       setShowForm(false);
       toast("Task created", "success");
+
     } catch (err) {
       toast(err.message || "Failed to create task", "error");
       throw err;
     }
   }
+
 
   async function handleToggle(id) {
     const task = tasks.find((t) => t.id === id);
