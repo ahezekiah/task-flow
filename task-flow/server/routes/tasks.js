@@ -1,7 +1,7 @@
-const express = require("express");
-const router = express.Router();
-const prisma = require("../lib/prisma");
-const { verifyToken } = require("../middleware/auth");
+import { Router } from "express";
+const router = Router();
+import { task as _task, comment as _comment } from "../lib/prisma";
+import { verifyToken } from "../middleware/auth";
 
 router.use(verifyToken);
 
@@ -16,7 +16,7 @@ router.get("/", async (req, res) => {
     ? { teamId: parseInt(teamId) }
     : { creatorId: req.user.userId, teamId: null };
 
-  const tasks = await prisma.task.findMany({
+  const tasks = await _task.findMany({
     where,
     include: {
       creator: { select: { id: true, name: true } },
@@ -33,7 +33,7 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
-  const task = await prisma.task.findUnique({
+  const task = await _task.findUnique({
     where: { id: parseInt(req.params.id) },
     include: {
       creator: { select: { id: true, name: true } },
@@ -57,7 +57,7 @@ router.post("/", async (req, res) => {
     return res.status(400).json({ message: "Title is required." });
   }
 
-  const task = await prisma.task.create({
+  const task = await _task.create({
     data: {
       title,
       description: description || null,
@@ -79,7 +79,7 @@ router.post("/", async (req, res) => {
 
 router.put("/:id", async (req, res) => {
   const id = parseInt(req.params.id);
-  const existing = await prisma.task.findUnique({ where: { id } });
+  const existing = await _task.findUnique({ where: { id } });
 
   if (!existing) return res.status(404).json({ message: "Task not found." });
 
@@ -89,7 +89,7 @@ router.put("/:id", async (req, res) => {
 
   const { title, description, priority, status, dueDate, completed, assigneeId } = req.body;
 
-  const task = await prisma.task.update({
+  const task = await _task.update({
     where: { id },
     data: {
       ...(title !== undefined && { title }),
@@ -111,7 +111,7 @@ router.put("/:id", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
   const id = parseInt(req.params.id);
-  const existing = await prisma.task.findUnique({ where: { id } });
+  const existing = await _task.findUnique({ where: { id } });
 
   if (!existing) return res.status(404).json({ message: "Task not found." });
 
@@ -119,7 +119,7 @@ router.delete("/:id", async (req, res) => {
     return res.status(403).json({ message: "You can only delete your own tasks." });
   }
 
-  await prisma.task.delete({ where: { id } });
+  await _task.delete({ where: { id } });
   res.json({ message: "Task deleted." });
 });
 
@@ -127,7 +127,7 @@ router.post("/:id/comments", async (req, res) => {
   const { content } = req.body;
   if (!content) return res.status(400).json({ message: "Comment content is required." });
 
-  const comment = await prisma.comment.create({
+  const comment = await _comment.create({
     data: {
       content,
       userId: req.user.userId,
@@ -139,4 +139,4 @@ router.post("/:id/comments", async (req, res) => {
   res.status(201).json(comment);
 });
 
-module.exports = router;
+export default router;

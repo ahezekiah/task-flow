@@ -1,12 +1,12 @@
-const express = require("express");
-const router = express.Router();
-const prisma = require("../lib/prisma");
-const { verifyToken, requireRole } = require("../middleware/auth");
+import { Router } from "express";
+const router = Router();
+import { user as _user } from "../lib/prisma";
+import { verifyToken, requireRole } from "../middleware/auth";
 
 router.use(verifyToken);
 
 router.get("/me", async (req, res) => {
-  const user = await prisma.user.findUnique({
+  const user = await _user.findUnique({
     where: { id: req.user.userId },
     select: { id: true, name: true, email: true, role: true, createdAt: true },
   });
@@ -16,7 +16,7 @@ router.get("/me", async (req, res) => {
 });
 
 router.get("/", requireRole("SYSTEM_ADMIN"), async (req, res) => {
-  const users = await prisma.user.findMany({
+  const users = await _user.findMany({
     select: {
       id: true,
       name: true,
@@ -40,7 +40,7 @@ router.put("/:id/role", requireRole("SYSTEM_ADMIN"), async (req, res) => {
     return res.status(400).json({ message: "Invalid role." });
   }
 
-  const user = await prisma.user.update({
+  const user = await _user.update({
     where: { id: parseInt(req.params.id) },
     data: { role },
     select: { id: true, name: true, email: true, role: true },
@@ -50,7 +50,7 @@ router.put("/:id/role", requireRole("SYSTEM_ADMIN"), async (req, res) => {
 });
 
 router.put("/:id/deactivate", requireRole("SYSTEM_ADMIN"), async (req, res) => {
-  const user = await prisma.user.update({
+  const user = await _user.update({
     where: { id: parseInt(req.params.id) },
     data: { isActive: false },
     select: { id: true, name: true, email: true, isActive: true },
@@ -59,4 +59,4 @@ router.put("/:id/deactivate", requireRole("SYSTEM_ADMIN"), async (req, res) => {
   res.json(user);
 });
 
-module.exports = router;
+export default router;

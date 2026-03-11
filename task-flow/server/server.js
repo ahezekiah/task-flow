@@ -1,17 +1,17 @@
 require("dotenv").config();
-const express = require("express");
-const cors = require("cors");
+import express, { json } from "express";
+import cors from "cors";
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5050;
 
 app.use(cors());
-app.use(express.json());
+app.use(json());
 
-const authRouter = require("./routes/auth");
-const tasksRouter = require("./routes/tasks");
-const usersRouter = require("./routes/users");
-const teamsRouter = require("./routes/teams");
+import authRouter from "./routes/auth";
+import tasksRouter from "./routes/tasks";
+import usersRouter from "./routes/users";
+import teamsRouter from "./routes/teams";
 
 app.use("/auth", authRouter);
 app.use("/tasks", tasksRouter);
