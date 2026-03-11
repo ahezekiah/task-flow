@@ -1,6 +1,8 @@
-require("dotenv").config();
+import dotenv from "dotenv";
+dotenv.config();
 import express, { json } from "express";
 import cors from "cors";
+
 
 const app = express();
 const PORT = process.env.PORT || 5050;
@@ -17,6 +19,7 @@ app.use("/auth", authRouter);
 app.use("/tasks", tasksRouter);
 app.use("/users", usersRouter);
 app.use("/teams", teamsRouter);
+app.use("/uploads", express.static("uploads"));
 
 app.get("/", (req, res) => {
   res.json({ message: "TaskFlow Pro API", status: "running" });

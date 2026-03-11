@@ -1,7 +1,9 @@
 import { Router } from "express";
 const router = Router();
-import { user as _user } from "../lib/prisma.js";
 import { verifyToken, requireRole } from "../middleware/auth.js";
+import prisma from "../lib/prisma.js";
+
+const _user = prisma.user;
 
 router.use(verifyToken);
 

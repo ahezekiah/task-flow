@@ -19,7 +19,7 @@ If you are developing a production application, we recommend using TypeScript wi
 Contribution to the project
 
 - Amanda:
-
+Added the file attachment upload part.
 - Emely
 
 - Naomi

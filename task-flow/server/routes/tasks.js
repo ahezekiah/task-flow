@@ -1,7 +1,12 @@
 import { Router } from "express";
 const router = Router();
-import { task as _task, comment as _comment } from "../lib/prisma.js";
+import multer from "multer";
 import { verifyToken } from "../middleware/auth.js";
+
+import prisma from "../lib/prisma.js";
+
+const _task = prisma.task;
+const _comment = prisma.comment;
 
 router.use(verifyToken);
 
@@ -137,6 +142,46 @@ router.post("/:id/comments", async (req, res) => {
   });
 
   res.status(201).json(comment);
+});
+
+
+// BONUS: File Attachments: Let users attach files or images to tasks.
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/");
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
+
+const upload = multer({ storage });
+
+router.post("/:id/attachment", upload.single("file"), async (req, res) => {
+  const id = parseInt(req.params.id);
+
+  if (!req.file) {
+    return res.status(400).json({ message: "File is required." });
+  }
+
+  const existing = await _task.findUnique({ where: { id } });
+
+  if (!existing) {
+    return res.status(404).json({ message: "Task not found." });
+  }
+
+  const task = await _task.update({
+    where: { id },
+    data: {
+      attachment: req.file.path,
+    },
+    include: {
+      creator: { select: { id: true, name: true } },
+      assignee: { select: { id: true, name: true } },
+    },
+  });
+
+  res.json(task);
 });
 
 export default router;

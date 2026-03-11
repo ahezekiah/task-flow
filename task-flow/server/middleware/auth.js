@@ -1,4 +1,7 @@
-import { verify } from "jsonwebtoken";
+// import { verify } from "jsonwebtoken";
+import pkg from 'jsonwebtoken';
+const { verify } = pkg;
+
 
 function verifyToken(req, res, next) {
   const authHeader = req.headers["authorization"];
@@ -26,4 +29,4 @@ function requireRole(...roles) {
   };
 }
 
-export default { verifyToken, requireRole };
+export { verifyToken, requireRole };

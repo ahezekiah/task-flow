@@ -14,8 +14,10 @@ const defaultForm = {
 
 export default function AddTaskForm({ onAddTask, onCancel, members = [] }) {
   const [form, setForm] = useState(defaultForm);
+  const [file, setFile] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const formData = new FormData();
 
   function handleChange(e) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -30,14 +32,36 @@ export default function AddTaskForm({ onAddTask, onCancel, members = [] }) {
     }
     setLoading(true);
     try {
-      await onAddTask({
-        ...form,
-        title: form.title.trim(),
-        description: form.description.trim() || undefined,
-        dueDate: form.dueDate || undefined,
-        assigneeId: form.assigneeId ? parseInt(form.assigneeId) : undefined,
-      });
+      formData.append("title", form.title.trim());
+      formData.append("priority", form.priority);
+      formData.append("status", form.status);
+
+      if (form.description.trim()) {
+        formData.append("description", form.description.trim());
+      }
+
+      if (form.dueDate) {
+        formData.append("dueDate", form.dueDate);
+      }
+
+      if (form.assigneeId) {
+        formData.append("assigneeId", parseInt(form.assigneeId));
+      }
+
+      if (file) {
+        formData.append("file", file);
+      }
+
+      await onAddTask(formData);
+      // await onAddTask({
+      //   ...form,
+      //   title: form.title.trim(),
+      //   description: form.description.trim() || undefined,
+      //   dueDate: form.dueDate || undefined,
+      //   assigneeId: form.assigneeId ? parseInt(form.assigneeId) : undefined,
+      // });
       setForm(defaultForm);
+      setFile(null);
     } finally {
       setLoading(false);
     }
@@ -107,6 +131,18 @@ export default function AddTaskForm({ onAddTask, onCancel, members = [] }) {
           </GlassSelect>
         )}
         <div className="flex gap-2 mt-1">
+          <GlassInput
+            type="file"
+            label="Attachment"
+            accept="image/*,.pdf,.doc,.docx"
+            onChange={(e) => setFile(e.target.files[0])}
+          />
+
+          {file && (
+            <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+              📎 {file.name}
+            </p>
+          )}
           <GlassButton type="submit" variant="primary" loading={loading} className="flex-1">
             Add task
           </GlassButton>
