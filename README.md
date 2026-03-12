@@ -84,6 +84,7 @@ We went beyond the base requirements with three creative extensions:
 - **Kanban Board** — drag tasks between Todo / In Progress / Done columns using @dnd-kit
 - **Calendar View** — month calendar showing tasks by due date, click a day to see what's due
 - **Activity Feed** — real-time-ish timeline of everything happening across your tasks and teams
+- **File/Attachment Upload** - Can upload a File attachmant that will show on the Task Card
 
 ## Team
 
