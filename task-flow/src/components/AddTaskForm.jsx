@@ -56,14 +56,14 @@ export default function AddTaskForm({ onAddTask, onCancel, members = [] }) {
         formData.append("file", file);
       }
 
-      await onAddTask(formData);
-      // await onAddTask({
-      //   ...form,
-      //   title: form.title.trim(),
-      //   description: form.description.trim() || undefined,
-      //   dueDate: form.dueDate || undefined,
-      //   assigneeId: form.assigneeId ? parseInt(form.assigneeId) : undefined,
-      // });
+      await onAddTask({
+        ...form,
+        title: form.title.trim(),
+        description: form.description.trim() || undefined,
+        dueDate: form.dueDate || undefined,
+        assigneeId: form.assigneeId ? parseInt(form.assigneeId) : undefined,
+        file
+      });
       setForm(defaultForm);
       setFile(null);
     } finally {
