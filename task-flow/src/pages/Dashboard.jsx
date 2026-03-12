@@ -69,7 +69,19 @@ export default function Dashboard() {
       }
 
       // create task
-      const task = await api.post("/tasks", Object.fromEntries([...data.entries()]));
+      const taskData = {
+        title: data.get("title"),
+        description: data.get("description") || undefined,
+        priority: data.get("priority"),
+        status: data.get("status"),
+        dueDate: data.get("dueDate") || undefined,
+        assigneeId: data.get("assigneeId")
+          ? parseInt(data.get("assigneeId"))
+          : undefined,
+      };
+
+      const task = await api.post("/tasks", taskData);
+      // const task = await api.post("/tasks", Object.fromEntries([...data.entries()]));
 
       // immediately show task in UI
       setTasks((prev) => [task, ...prev]);
