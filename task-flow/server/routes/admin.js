@@ -1,7 +1,12 @@
-const express = require("express");
-const router = express.Router();
-const prisma = require("../lib/prisma");
-const { verifyToken, requireRole } = require("../middleware/auth");
+import { Router } from "express";
+const router = Router();
+// import { task as _task, team, user as _user } from "../lib/prisma";
+import { verifyToken, requireRole } from "../middleware/auth.js";
+import prisma from "../lib/prisma.js";
+
+const _user = prisma.user;
+const _task = prisma.task;
+const team = prisma.team;
 
 router.use(verifyToken, requireRole("SYSTEM_ADMIN"));
 
@@ -14,26 +19,26 @@ router.get("/analytics", async (req, res) => {
     topContributorGroups,
     teams,
   ] = await Promise.all([
-    prisma.task.count(),
-    prisma.task.count({ where: { status: "DONE" } }),
-    prisma.task.count({
+    _task.count(),
+    _task.count({ where: { status: "DONE" } }),
+    _task.count({
       where: {
         dueDate: { lt: new Date() },
         status: { not: "DONE" },
       },
     }),
-    prisma.task.groupBy({
+    _task.groupBy({
       by: ["priority"],
       _count: { _all: true },
     }),
-    prisma.task.groupBy({
+    _task.groupBy({
       by: ["creatorId"],
       where: { status: "DONE" },
       _count: { _all: true },
       orderBy: { _count: { creatorId: "desc" } },
       take: 5,
     }),
-    prisma.team.findMany({
+    team.findMany({
       select: {
         id: true,
         name: true,
@@ -52,7 +57,7 @@ router.get("/analytics", async (req, res) => {
   });
 
   const creatorIds = topContributorGroups.map((g) => g.creatorId);
-  const contributorUsers = await prisma.user.findMany({
+  const contributorUsers = await _user.findMany({
     where: { id: { in: creatorIds } },
     select: { id: true, name: true },
   });
@@ -77,4 +82,4 @@ router.get("/analytics", async (req, res) => {
   });
 });
 
-module.exports = router;
+export default router;

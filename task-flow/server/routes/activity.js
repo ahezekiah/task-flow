@@ -1,7 +1,13 @@
-const express = require("express");
-const router = express.Router();
-const prisma = require("../lib/prisma");
-const { verifyToken } = require("../middleware/auth");
+import { Router } from "express";
+const router = Router();
+// import { teamMember, task as _task, comment as _comment } from "../lib/prisma";
+import { verifyToken } from "../middleware/auth.js";
+
+import prisma from "../lib/prisma.js";
+
+const _task = prisma.task;
+const _comment = prisma.comment;
+const teamMember = prisma.teamMember
 
 router.use(verifyToken);
 
@@ -9,14 +15,14 @@ router.get("/", async (req, res) => {
   const userId = req.user.userId;
   const limit = parseInt(req.query.limit) || 50;
 
-  const memberships = await prisma.teamMember.findMany({
+  const memberships = await teamMember.findMany({
     where: { userId },
     select: { teamId: true },
   });
   const teamIds = memberships.map((m) => m.teamId);
 
   const [tasks, comments] = await Promise.all([
-    prisma.task.findMany({
+    _task.findMany({
       where: {
         OR: [{ creatorId: userId }, { teamId: { in: teamIds } }],
       },
@@ -24,7 +30,7 @@ router.get("/", async (req, res) => {
       orderBy: { createdAt: "desc" },
       take: 200,
     }),
-    prisma.comment.findMany({
+    _comment.findMany({
       where: {
         OR: [
           { userId },
@@ -83,4 +89,4 @@ router.get("/", async (req, res) => {
   res.json(events.slice(0, limit));
 });
 
-module.exports = router;
+export default router;

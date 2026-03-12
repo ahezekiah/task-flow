@@ -1,6 +1,8 @@
-require("dotenv").config();
-const { PrismaClient } = require("@prisma/client");
-const bcrypt = require("bcrypt");
+import "dotenv/config";
+
+// require("dotenv").config();
+import { PrismaClient } from "@prisma/client";
+import { hash as _hash } from "bcrypt";
 
 const prisma = new PrismaClient();
 
@@ -11,7 +13,7 @@ async function main() {
   await prisma.team.deleteMany();
   await prisma.user.deleteMany();
 
-  const hash = (pw) => bcrypt.hash(pw, 10);
+  const hash = (pw) => _hash(pw, 10);
 
   const [naomi, amanda, marcus, sofia, jordan, riley] = await Promise.all([
     prisma.user.create({ data: { name: "Naomi Vazquez", email: "nv@email.com", password: await hash("password123"), role: "SYSTEM_ADMIN" } }),
