@@ -90,4 +90,5 @@ We went beyond the base requirements with three creative extensions:
 
 - **Naomi** — Full-stack (everything lol)
 - **Amanda** — Contributed to initial planning, made the foundation of the application & added the file upload portion to the add task
+- **Emely** - Refactored the styling by moving inline styles into separate CSS files, improved the app’s responsiveness, added a hamburger menu for better navigation on smaller screens, fixed a loading issue that caused the app to break on refresh, and built the original backend functionality, which was later updated by another group member.
 - Project for MTM 320, Advanced Web Scripting
