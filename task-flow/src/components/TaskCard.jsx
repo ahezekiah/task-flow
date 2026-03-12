@@ -16,6 +16,7 @@ function formatDate(dateStr) {
 export default function TaskCard({ task, onDelete, onToggle, index = 0 }) {
   const overdue = isOverdue(task);
   const done = task.completed || task.status === "DONE";
+  const fileUrl = `http://localhost:5050/${task.attachment}`;
 
   return (
     <motion.article
@@ -72,18 +73,19 @@ export default function TaskCard({ task, onDelete, onToggle, index = 0 }) {
           </span>
         )}
       </div>
+      
       {/* ATTACHMENT PREVIEW */}
       {task.attachment && (
         <div className="mt-1">
-          {task.attachment.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
+          {task.attachment?.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
             <img
-              src={`http://localhost:5050/${task.attachment}`}
+              ssrc={fileUrl}
               alt="attachment"
               className="rounded-md max-h-28 object-cover"
             />
           ) : (
             <a
-              href={`http://localhost:5050/${task.attachment}`}
+              href={fileUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs underline"

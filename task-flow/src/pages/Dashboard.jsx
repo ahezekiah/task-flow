@@ -71,20 +71,23 @@ export default function Dashboard() {
       // create task
       const task = await api.post("/tasks", Object.fromEntries([...data.entries()]));
 
+      // immediately show task in UI
+      setTasks((prev) => [task, ...prev]);
+
       // upload file if present
       if (file instanceof File) {
-        const uploadData = new FormData();
-        uploadData.append("file", file);
+          const uploadData = new FormData();
+          uploadData.append("file", file);
 
-        await api.post(`/tasks/${task.id}/attachment`, uploadData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-      }
-
+          await api.post(`/tasks/${task.id}/attachment`, uploadData);
+        }
+        
       // get updated task with attachment
       const updated = await api.get(`/tasks/${task.id}`);
 
-      setTasks((prev) => [updated, ...prev]);
+      setTasks((prev) =>
+        prev.map((t) => (t.id === updated.id ? updated : t))
+      );
       setShowForm(false);
       toast("Task created", "success");
 

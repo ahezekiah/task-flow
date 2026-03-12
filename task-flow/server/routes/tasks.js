@@ -147,15 +147,13 @@ router.post("/:id/comments", async (req, res) => {
 
 // BONUS: File Attachments: Let users attach files or images to tasks.
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
-  },
+  destination: "uploads/",
   filename: (req, file, cb) => {
     cb(null, Date.now() + "-" + file.originalname);
-  },
+  }
 });
 
-const upload = multer({ storage });
+export const upload = multer({ storage });
 
 router.post("/:id/attachment", upload.single("file"), async (req, res) => {
   const id = parseInt(req.params.id);
@@ -170,10 +168,12 @@ router.post("/:id/attachment", upload.single("file"), async (req, res) => {
     return res.status(404).json({ message: "Task not found." });
   }
 
+  const attachmentPath = req.file.path.replace(/\\/g, "/");
+
   const task = await _task.update({
     where: { id },
     data: {
-      attachment: req.file.path,
+      attachment: attachmentPath,
     },
     include: {
       creator: { select: { id: true, name: true } },
