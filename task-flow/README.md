@@ -25,7 +25,11 @@ Create the routes
 Built the base of the app (excluding the backend parts)
 
 - Emely
-Made the current CSS styling
+Refactored styling by moving inline styles into separate CSS files
+Improved responsiveness
+Added hamburger menu for bettr navigation on smaller screens
+Fixed a loading issue that caused the app to break when the page refreshed
+Built original backend functionality (later changed by group member)
 
 - Naomi
 Handled the back end
