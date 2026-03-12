@@ -88,5 +88,5 @@ We went beyond the base requirements with three creative extensions:
 ## Team
 
 - **Naomi** — Full-stack (everything lol)
-- **Amanda** — Contributed to initial planning
+- **Amanda** — Contributed to initial planning, made the foundation of the application & added the file upload portion to the add task
 - Project for MTM 320, Advanced Web Scripting

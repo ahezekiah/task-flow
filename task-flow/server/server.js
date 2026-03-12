@@ -21,6 +21,8 @@ app.use("/users", usersRouter);
 app.use("/teams", teamsRouter);
 app.use("/activity", activityRouter);
 app.use("/admin", adminRouter);
+app.use("/uploads", express.static("uploads"));
+
 
 app.get("/", (req, res) => {
   res.json({ message: "TaskFlow Pro API", status: "running" });
