@@ -29,14 +29,16 @@ export default function AdminPage() {
   const toast = useToast();
   const [users, setUsers] = useState([]);
   const [tasks, setTasks] = useState([]);
+  const [analytics, setAnalytics] = useState(null);
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState(null);
 
   useEffect(() => {
-    Promise.all([api.get("/users"), api.get("/tasks?all=true")])
-      .then(([usersData, tasksData]) => {
+    Promise.all([api.get("/users"), api.get("/tasks?all=true"), api.get("/admin/analytics")])
+      .then(([usersData, tasksData, analyticsData]) => {
         setUsers(usersData);
         setTasks(tasksData);
+        setAnalytics(analyticsData);
       })
       .catch(() => toast("Failed to load admin data", "error"))
       .finally(() => setLoading(false));
@@ -131,6 +133,120 @@ export default function AdminPage() {
           </>
         )}
       </div>
+
+      {analytics && (
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="glass-card p-5 flex flex-col gap-3">
+            <div className="flex items-baseline justify-between">
+              <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
+                Completion Rate
+              </span>
+              {analytics.overdueTasks > 0 && (
+                <span className="text-xs" style={{ color: "var(--text-muted)" }}>
+                  {analytics.overdueTasks} overdue
+                </span>
+              )}
+            </div>
+            <div className="flex items-baseline gap-2">
+              <span className="text-3xl font-semibold tracking-tight" style={{ color: "var(--text-primary)" }}>
+                {analytics.completionRate}%
+              </span>
+            </div>
+            <div className="h-1.5 w-full rounded-full" style={{ background: "var(--glass-border)" }}>
+              <motion.div
+                className="h-1.5 rounded-full"
+                style={{ background: "rgba(255,255,255,0.5)" }}
+                initial={{ width: 0 }}
+                animate={{ width: `${analytics.completionRate}%` }}
+                transition={{ type: "spring", stiffness: 120, damping: 20, delay: 0.2 }}
+              />
+            </div>
+          </div>
+
+          <div className="glass-card p-5 flex flex-col gap-3">
+            <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
+              By Priority
+            </span>
+            {[
+              { label: "High", key: "HIGH", opacity: 0.7 },
+              { label: "Medium", key: "MEDIUM", opacity: 0.45 },
+              { label: "Low", key: "LOW", opacity: 0.25 },
+            ].map(({ label, key, opacity }) => {
+              const count = analytics.priorityBreakdown[key] || 0;
+              const total = Object.values(analytics.priorityBreakdown).reduce((a, b) => a + b, 0);
+              const pct = total > 0 ? (count / total) * 100 : 0;
+              return (
+                <div key={key} className="flex items-center gap-3">
+                  <span className="text-xs w-12 shrink-0" style={{ color: "var(--text-muted)" }}>{label}</span>
+                  <div className="flex-1 h-1 rounded-full" style={{ background: "var(--glass-border)" }}>
+                    <motion.div
+                      className="h-1 rounded-full"
+                      style={{ background: `rgba(255,255,255,${opacity})` }}
+                      initial={{ width: 0 }}
+                      animate={{ width: `${pct}%` }}
+                      transition={{ type: "spring", stiffness: 120, damping: 20, delay: 0.1 }}
+                    />
+                  </div>
+                  <span className="text-xs w-6 text-right shrink-0" style={{ color: "var(--text-muted)" }}>{count}</span>
+                </div>
+              );
+            })}
+          </div>
+
+          {analytics.topContributors.length > 0 && (
+            <div className="glass-card p-5 flex flex-col gap-3">
+              <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
+                Top Contributors
+              </span>
+              <div className="flex flex-col gap-2">
+                {analytics.topContributors.map((c, i) => (
+                  <motion.div
+                    key={c.id}
+                    className="flex items-center gap-3"
+                    initial={{ opacity: 0, x: -6 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.05, type: "spring", stiffness: 300, damping: 28 }}
+                  >
+                    <span className="text-xs w-4 shrink-0" style={{ color: "var(--text-muted)" }}>{i + 1}</span>
+                    <span className="text-sm flex-1 truncate" style={{ color: "var(--text-primary)" }}>{c.name}</span>
+                    <span className="text-xs" style={{ color: "var(--text-muted)" }}>{c.doneTasks} done</span>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {analytics.teamBreakdown.length > 0 && (
+            <div className="glass-card p-5 flex flex-col gap-3">
+              <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
+                Teams
+              </span>
+              <div className="flex flex-col gap-3">
+                {analytics.teamBreakdown.map((team) => {
+                  const pct = team.total > 0 ? (team.done / team.total) * 100 : 0;
+                  return (
+                    <div key={team.id} className="flex flex-col gap-1">
+                      <div className="flex justify-between">
+                        <span className="text-xs truncate" style={{ color: "var(--text-secondary)" }}>{team.name}</span>
+                        <span className="text-xs shrink-0 ml-2" style={{ color: "var(--text-muted)" }}>{team.done}/{team.total}</span>
+                      </div>
+                      <div className="h-1 w-full rounded-full" style={{ background: "var(--glass-border)" }}>
+                        <motion.div
+                          className="h-1 rounded-full"
+                          style={{ background: "rgba(255,255,255,0.4)" }}
+                          initial={{ width: 0 }}
+                          animate={{ width: `${pct}%` }}
+                          transition={{ type: "spring", stiffness: 120, damping: 20 }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="flex flex-col gap-4">
         <h2 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
