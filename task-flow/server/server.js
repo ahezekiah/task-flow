@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config();
-import express, { json } from "express";
+import express from "express";
 import cors from "cors";
 
 
@@ -8,7 +8,7 @@ const app = express();
 const PORT = process.env.PORT || 5050;
 
 app.use(cors());
-app.use(json());
+app.use(express.json()); 
 
 import authRouter from "./routes/auth.js";
 import tasksRouter from "./routes/tasks.js";

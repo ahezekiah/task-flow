@@ -161,7 +161,7 @@ router.post("/:id/attachment", upload.single("file"), async (req, res) => {
   const id = parseInt(req.params.id);
 
   if (!req.file) {
-    return res.status(400).json({ message: "File is required." });
+    return res.json({ message: "No attachment provided." });
   }
 
   const existing = await _task.findUnique({ where: { id } });

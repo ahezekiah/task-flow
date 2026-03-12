@@ -10,6 +10,7 @@ const _user = prisma.user;
 
 
 router.post("/register", async (req, res) => {
+  console.log(req.body);
   const { email, password, name } = req.body;
 
   if (!email || !password || !name) {
