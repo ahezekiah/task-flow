@@ -23,6 +23,9 @@ Added the file attachment upload part.
 Some basline CSS using Tailwind
 Create the routes
 Built the base of the app (excluding the backend parts)
+
 - Emely
+Made the current CSS styling
 
 - Naomi
+Handled the back end

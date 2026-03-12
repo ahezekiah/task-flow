@@ -69,10 +69,10 @@ export default function Dashboard() {
       }
 
       // create task
-      const task = await api.post("/tasks", Object.fromEntries(data));
+      const task = await api.post("/tasks", Object.fromEntries([...data.entries()]));
 
       // upload file if present
-      if (file) {
+      if (file instanceof File) {
         const uploadData = new FormData();
         uploadData.append("file", file);
 
