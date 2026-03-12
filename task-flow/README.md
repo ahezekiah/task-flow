@@ -20,6 +20,9 @@ Contribution to the project
 
 - Amanda:
 Added the file attachment upload part.
+Some basline CSS using Tailwind
+Create the routes
+Built the base of the app (excluding the backend parts)
 - Emely
 
 - Naomi
