@@ -59,9 +59,9 @@ export default function Dashboard() {
   //   }
   // }
 
-  async function handleAddTask(data) {
+  async function handleAddTask(data, file) {
     try {
-      let file = null;
+      // let file = null;
 
       if (data instanceof FormData) {
         file = data.get("file");
@@ -88,12 +88,19 @@ export default function Dashboard() {
       setTasks((prev) => [task, ...prev]);
 
       // upload file if present
-      if (file instanceof File) {
-          const uploadData = new FormData();
-          uploadData.append("file", file);
+      if (file) {
+        console.log("Uploading file:", file);
+        const uploadData = new FormData();
+        uploadData.append("file", file);
 
-          await api.post(`/tasks/${task.id}/attachment`, uploadData);
-        }
+        await api.post(`/tasks/${task.id}/attachment`, uploadData);
+      }
+      // if (file instanceof File) {
+      //     const uploadData = new FormData();
+      //     uploadData.append("file", file);
+
+      //     await api.post(`/tasks/${task.id}/attachment`, uploadData);
+      //   }
         
       // get updated task with attachment
       const updated = await api.get(`/tasks/${task.id}`);

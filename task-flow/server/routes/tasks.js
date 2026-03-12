@@ -156,6 +156,7 @@ const storage = multer.diskStorage({
 export const upload = multer({ storage });
 
 router.post("/:id/attachment", upload.single("file"), async (req, res) => {
+  console.log("FILE RECEIVED:", req.file);
   const id = parseInt(req.params.id);
 
   if (!req.file) {

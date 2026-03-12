@@ -58,12 +58,34 @@ export default function TeamDetailPage() {
       .finally(() => setLoading(false));
   }, [teamId]);
 
-  async function handleAddTask(data) {
+    async function handleAddTask(data, file) {
     try {
-      const task = await api.post("/tasks", { ...data, teamId: parseInt(teamId) });
+      const task = await api.post("/tasks", {
+        ...data,
+        teamId: parseInt(teamId),
+      });
+
+      // show task immediately
       setTasks((prev) => [task, ...prev]);
+
+      // upload attachment
+      if (file) {
+        const uploadData = new FormData();
+        uploadData.append("file", file);
+
+        await api.post(`/tasks/${task.id}/attachment`, uploadData);
+      }
+
+      // fetch updated task
+      const updated = await api.get(`/tasks/${task.id}`);
+
+      setTasks((prev) =>
+        prev.map((t) => (t.id === updated.id ? updated : t))
+      );
+
       setShowForm(false);
       toast("Task created", "success");
+
     } catch (err) {
       toast(err.message || "Failed to create task", "error");
       throw err;
@@ -167,6 +189,7 @@ export default function TeamDetailPage() {
           />
         )}
       </AnimatePresence>
+        
 
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div
@@ -211,7 +234,6 @@ export default function TeamDetailPage() {
         onToggleTask={handleToggle}
         onNewTask={() => setShowForm(true)}
       />
-
       <div className="glass-card p-5">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>

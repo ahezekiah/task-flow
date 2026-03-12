@@ -23,53 +23,34 @@ export default function AddTaskForm({ onAddTask, onCancel, members = [] }) {
     if (error) setError("");
   }
 
-  async function handleSubmit(e) {
-    
-    e.preventDefault();
-    if (!form.title.trim()) {
-      setError("Title is required");
-      return;
-    }
+async function handleSubmit(e) {
+  e.preventDefault();
 
-    const formData = new FormData();
+  if (!form.title.trim()) {
+    setError("Title is required");
+    return;
+  }
 
+  setLoading(true);
 
-    setLoading(true);
-    try {
-      formData.append("title", form.title.trim());
-      formData.append("priority", form.priority);
-      formData.append("status", form.status);
-
-      if (form.description.trim()) {
-        formData.append("description", form.description.trim());
-      }
-
-      if (form.dueDate) {
-        formData.append("dueDate", form.dueDate);
-      }
-
-      if (form.assigneeId) {
-        formData.append("assigneeId", parseInt(form.assigneeId));
-      }
-
-      if (file) {
-        formData.append("file", file);
-      }
-
-      await onAddTask({
+  try {
+    await onAddTask(
+      {
         ...form,
         title: form.title.trim(),
         description: form.description.trim() || undefined,
         dueDate: form.dueDate || undefined,
         assigneeId: form.assigneeId ? parseInt(form.assigneeId) : undefined,
-        file
-      });
-      setForm(defaultForm);
-      setFile(null);
-    } finally {
-      setLoading(false);
-    }
+      },
+      file
+    );
+
+    setForm(defaultForm);
+    setFile(null);
+  } finally {
+    setLoading(false);
   }
+}
 
   return (
     <motion.div

@@ -16,7 +16,6 @@ function formatDate(dateStr) {
 export default function TaskCard({ task, onDelete, onToggle, index = 0 }) {
   const overdue = isOverdue(task);
   const done = task.completed || task.status === "DONE";
-  const fileUrl = `http://localhost:5050/${task.attachment}`;
 
   return (
     <motion.article

@@ -129,7 +129,29 @@ export default function TaskDetailPage() {
             </span>
           )}
         </div>
+        {/* ATTACHMENT PREVIEW */}
+        {task.attachment && (
+          <div className="mt-2">
+            {task.attachment?.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
+              <img
+                src={`http://localhost:5050/${task.attachment}`}
+                alt="attachment"
+                className="rounded-lg max-h-40 object-cover"
+              />
+            ) : (
+              <a
+                href={`http://localhost:5050/${task.attachment}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                📎 View attachment
+              </a>
+            )}
+        </div>
+      )}
       </GlassCard>
+
+
 
       <GlassCard animate={false} className="p-5 flex flex-col gap-4">
         <h2 className="text-sm font-medium" style={{ color: "var(--text-secondary)" }}>
@@ -163,6 +185,8 @@ export default function TaskDetailPage() {
             No comments yet.
           </p>
         )}
+
+        
 
         <div className="divider" />
 
