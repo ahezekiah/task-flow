@@ -17,6 +17,9 @@ services:
     build: ./task-flow/server
     ports:
       - "5050:5050"
+    volumes:
+      - ./task-flow/server:/app
+      - ./task-flow/server/uploads:/app/uploads
     environment:
       DATABASE_URL: postgresql://naeomei:postgres@postgres:5432/taskflow_pro?schema=public
       JWT_SECRET: taskflow-pro-super-secret-key-change-in-production
