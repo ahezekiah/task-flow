@@ -58,7 +58,7 @@ router.get("/:id", async (req, res) => {
 router.post("/", async (req, res) => {
   const { title, description, priority, status, dueDate, teamId, assigneeId } = req.body;
 
-  if (!title) {
+  if (!title?.trim()) {
     return res.status(400).json({ message: "Title is required." });
   }
 
@@ -150,7 +150,7 @@ const storage = multer.diskStorage({
   destination: "uploads/",
   filename: (req, file, cb) => {
     cb(null, Date.now() + "-" + file.originalname);
-  }
+  },
 });
 
 export const upload = multer({ storage });
@@ -162,13 +162,7 @@ router.post("/:id/attachment", upload.single("file"), async (req, res) => {
     return res.json({ message: "No attachment provided." });
   }
 
-  const existing = await _task.findUnique({ where: { id } });
-
-  if (!existing) {
-    return res.status(404).json({ message: "Task not found." });
-  }
-
-  const attachmentPath = req.file.path.replace(/\\/g, "/");
+  const attachmentPath = `uploads/${req.file.filename}`;
 
   const task = await _task.update({
     where: { id },

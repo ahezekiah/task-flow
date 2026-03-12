@@ -76,22 +76,20 @@ export default function TaskCard({ task, onDelete, onToggle, index = 0 }) {
       
       {/* ATTACHMENT PREVIEW */}
       {task.attachment && (
-        <div className="mt-1">
+        <div className="mt-2">
           {task.attachment?.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
             <img
-              ssrc={fileUrl}
+              src={`http://localhost:5050/${task.attachment}`}
               alt="attachment"
-              className="rounded-md max-h-28 object-cover"
+              className="rounded-lg max-h-40 object-cover"
             />
           ) : (
             <a
-              href={fileUrl}
+              href={`http://localhost:5050/${task.attachment}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs underline"
-              style={{ color: "var(--text-secondary)" }}
             >
-              📎 View Attachment
+              📎 View attachment
             </a>
           )}
         </div>

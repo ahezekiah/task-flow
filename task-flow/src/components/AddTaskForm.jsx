@@ -17,7 +17,6 @@ export default function AddTaskForm({ onAddTask, onCancel, members = [] }) {
   const [file, setFile] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const formData = new FormData();
 
   function handleChange(e) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -25,11 +24,16 @@ export default function AddTaskForm({ onAddTask, onCancel, members = [] }) {
   }
 
   async function handleSubmit(e) {
+    
     e.preventDefault();
     if (!form.title.trim()) {
       setError("Title is required");
       return;
     }
+
+    const formData = new FormData();
+
+
     setLoading(true);
     try {
       formData.append("title", form.title.trim());
