@@ -1,6 +1,6 @@
 # TaskFlow Pro
 
-A full-stack multi-user task management app built for MTM 320 (Advanced Web Scripting). This was our capstone project — we built it week by week throughout the semester, starting with a basic React CRUD app and turning it into a full role-based collaboration platform with authentication, teams, and a bunch of extra features we added for fun.
+A full-stack multi-user task management app. This was our capstone project — we built it week by week throughout the semester, starting with a basic React CRUD app and turning it into a full role-based collaboration platform with authentication, teams, and a bunch of extra features we added for fun.
 
 ## What it does
 
