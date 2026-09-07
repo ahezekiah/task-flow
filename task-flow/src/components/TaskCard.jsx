@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { GlassBadge } from "./ui/GlassBadge";
 import { GlassButton } from "./ui/GlassButton";
+import { API_BASE_URL } from "../lib/api";
 
 function isOverdue(task) {
   if (!task.dueDate || task.completed || task.status === "DONE") return false;
@@ -78,13 +79,13 @@ export default function TaskCard({ task, onDelete, onToggle, index = 0 }) {
         <div className="mt-2">
           {task.attachment?.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
             <img
-              src={`http://localhost:5050/${task.attachment}`}
+              src={`${API_BASE_URL}/${task.attachment}`}
               alt="attachment"
               className="rounded-lg max-h-40 object-cover"
             />
           ) : (
             <a
-              href={`http://localhost:5050/${task.attachment}`}
+              href={`${API_BASE_URL}/${task.attachment}`}
               target="_blank"
               rel="noopener noreferrer"
             >

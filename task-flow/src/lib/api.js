@@ -1,4 +1,7 @@
-const BASE_URL = "http://localhost:5050";
+export const API_BASE_URL = (
+  import.meta.env.VITE_API_URL ||
+  "http://localhost:5050"
+).replace(/\/$/, "");
 
 function getToken() {
   return localStorage.getItem("token");
@@ -6,31 +9,40 @@ function getToken() {
 
 async function request(method, path, body) {
   const token = getToken();
-
   const headers = {};
 
   if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
+    headers.Authorization = `Bearer ${token}`;
   }
 
-  // only set JSON headers if body is not FormData
+  let requestBody = body;
+
   if (body && !(body instanceof FormData)) {
     headers["Content-Type"] = "application/json";
-    body = JSON.stringify(body);
+    requestBody = JSON.stringify(body);
   }
 
-  const res = await fetch(`${BASE_URL}${path}`, {
-    method,
-    headers,
-    body,
-  });
+  const response = await fetch(
+    `${API_BASE_URL}${path}`,
+    {
+      method,
+      headers,
+      body: requestBody
+    }
+  );
 
-  const data = await res.json().catch(() => ({}));
+  const data = await response
+    .json()
+    .catch(() => ({}));
 
-  if (!res.ok) {
-    const err = new Error(data.message || "Request failed");
-    err.status = res.status;
-    throw err;
+  if (!response.ok) {
+    const error = new Error(
+      data.message || "Request failed"
+    );
+
+    error.status = response.status;
+
+    throw error;
   }
 
   return data;
@@ -38,7 +50,12 @@ async function request(method, path, body) {
 
 export const api = {
   get: (path) => request("GET", path),
-  post: (path, body) => request("POST", path, body),
-  put: (path, body) => request("PUT", path, body),
-  delete: (path) => request("DELETE", path),
+  post: (path, body) =>
+    request("POST", path, body),
+  put: (path, body) =>
+    request("PUT", path, body),
+  patch: (path, body) =>
+    request("PATCH", path, body),
+  delete: (path, body) =>
+    request("DELETE", path, body)
 };

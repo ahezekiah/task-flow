@@ -9,6 +9,7 @@ import { GlassTextarea } from "../components/ui/GlassInput";
 import { Skeleton } from "../components/ui/Skeleton";
 import { useToast } from "../components/ui/Toast";
 import { useAuth } from "../context/AuthContext";
+import { API_BASE_URL } from "../lib/api";
 
 function formatDate(dateStr) {
   if (!dateStr) return null;
@@ -134,13 +135,13 @@ export default function TaskDetailPage() {
           <div className="mt-2">
             {task.attachment?.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
               <img
-                src={`http://localhost:5050/${task.attachment}`}
+                src={`${API_BASE_URL}/${task.attachment}`}
                 alt="attachment"
                 className="rounded-lg max-h-40 object-cover"
               />
             ) : (
               <a
-                href={`http://localhost:5050/${task.attachment}`}
+                href={`${API_BASE_URL}/${task.attachment}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
