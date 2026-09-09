@@ -58,37 +58,57 @@ export default function TeamDetailPage() {
       .finally(() => setLoading(false));
   }, [teamId]);
 
-    async function handleAddTask(data, file) {
+  async function handleAddTask(data, file) {
     try {
       const task = await api.post("/tasks", {
         ...data,
-        teamId: parseInt(teamId),
+        teamId: Number(teamId),
       });
 
-      // show task immediately
-      setTasks((prev) => [task, ...prev]);
+      setTasks((previousTasks) => [
+        task,
+        ...previousTasks,
+      ]);
 
-      // upload attachment
       if (file) {
         const uploadData = new FormData();
         uploadData.append("file", file);
 
-        await api.post(`/tasks/${task.id}/attachment`, uploadData);
+        try {
+          await api.post(
+            `/tasks/${task.id}/attachment`,
+            uploadData
+          );
+        } catch (uploadError) {
+          toast(
+            uploadError.message ||
+              "Task created, but the attachment failed to upload",
+            "error"
+          );
+        }
       }
 
-      // fetch updated task
-      const updated = await api.get(`/tasks/${task.id}`);
+      const updatedTask = await api.get(
+        `/tasks/${task.id}`
+      );
 
-      setTasks((prev) =>
-        prev.map((t) => (t.id === updated.id ? updated : t))
+      setTasks((previousTasks) =>
+        previousTasks.map((existingTask) =>
+          existingTask.id === updatedTask.id
+            ? updatedTask
+            : existingTask
+        )
       );
 
       setShowForm(false);
       toast("Task created", "success");
+    } catch (error) {
+      toast(
+        error.message || "Failed to create task",
+        "error"
+      );
 
-    } catch (err) {
-      toast(err.message || "Failed to create task", "error");
-      throw err;
+      throw error;
     }
   }
 

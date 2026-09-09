@@ -47,73 +47,54 @@ export default function Dashboard() {
       .finally(() => setLoading(false));
   }, []);
 
-  // async function handleAddTask(data) {
-  //   try {
-  //     const task = await api.post("/tasks", data);
-  //     setTasks((prev) => [task, ...prev]);
-  //     setShowForm(false);
-  //     toast("Task created", "success");
-  //   } catch (err) {
-  //     toast(err.message || "Failed to create task", "error");
-  //     throw err;
-  //   }
-  // }
-
   async function handleAddTask(data, file) {
     try {
-      // let file = null;
+      const task = await api.post("/tasks", data);
 
-      if (data instanceof FormData) {
-        file = data.get("file");
-        data.delete("file");
-      }
+      setTasks((previousTasks) => [
+        task,
+        ...previousTasks,
+      ]);
 
-      // create task
-      const taskData = data instanceof FormData
-      ? {
-          title: data.get("title"),
-          description: data.get("description") || undefined,
-          priority: data.get("priority"),
-          status: data.get("status"),
-          dueDate: data.get("dueDate") || undefined,
-          assigneeId: data.get("assigneeId")
-            ? parseInt(data.get("assigneeId"))
-            : undefined,
-        }
-      : data;
-
-      const task = await api.post("/tasks", taskData);
-      
-      // immediately show task in UI
-      setTasks((prev) => [task, ...prev]);
-
-      // upload file if present
       if (file) {
-        console.log("Uploading file:", file);
         const uploadData = new FormData();
         uploadData.append("file", file);
 
-        await api.post(`/tasks/${task.id}/attachment`, uploadData);
+        try {
+          await api.post(
+            `/tasks/${task.id}/attachment`,
+            uploadData
+          );
+        } catch (uploadError) {
+          toast(
+            uploadError.message ||
+              "Task created, but the attachment failed to upload",
+            "error"
+          );
+        }
       }
-      // if (file instanceof File) {
-      //     const uploadData = new FormData();
-      //     uploadData.append("file", file);
 
-      //     await api.post(`/tasks/${task.id}/attachment`, uploadData);
-      //   }
-        
-      // get updated task with attachment
-      const updated = await api.get(`/tasks/${task.id}`);
-
-      setTasks((prev) =>
-        prev.map((t) => (t.id === updated.id ? updated : t))
+      const updatedTask = await api.get(
+        `/tasks/${task.id}`
       );
+
+      setTasks((previousTasks) =>
+        previousTasks.map((existingTask) =>
+          existingTask.id === updatedTask.id
+            ? updatedTask
+            : existingTask
+        )
+      );
+
       setShowForm(false);
       toast("Task created", "success");
+    } catch (error) {
+      toast(
+        error.message || "Failed to create task",
+        "error"
+      );
 
-    } catch (err) {
-      toast(err.message || "Failed to create task", "error");
-      throw err;
+      throw error;
     }
   }
 
