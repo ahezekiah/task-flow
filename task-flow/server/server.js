@@ -15,6 +15,7 @@ const PORT = process.env.PORT || 5050;
 
 const allowedOrigins = [
   "http://localhost:5173",
+  'https://task-flow-nine-liard.vercel.app',
   process.env.FRONTEND_URL
 ].filter(Boolean);
 
