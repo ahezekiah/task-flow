@@ -16,8 +16,8 @@ export function ToastProvider({ children }) {
 
   const typeStyles = {
     default: { border: "rgba(255,255,255,0.15)", color: "var(--text-primary)" },
-    success: { border: "rgba(16,185,129,0.3)", color: "rgba(110,231,183,0.9)" },
-    error: { border: "rgba(239,68,68,0.3)", color: "rgba(252,165,165,0.9)" },
+    success: { border: "rgba(16,185,129,0.3)", color: "rgba(49, 196, 137, 0.9)" },
+    error: { border: "rgba(239,68,68,0.3)", color: "rgba(168, 62, 62, 0.9)" },
   };
 
   return (
